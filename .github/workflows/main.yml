@@ -1,4 +1,4 @@
-name: .NET Core Desktop
+name: Build
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -16,9 +16,7 @@ jobs:
       uses: actions/setup-dotnet@v4
 
     - name: Build & Install Mono
-      run: |
-        ls
-        ./.github/install-mono.sh
+      run: ./.github/install-mono.sh
 
     - name: Compile
       run: ./compile.sh
@@ -35,6 +33,3 @@ jobs:
         name: Continuous Build
         allowUpdates: false
         artifacts: HLTextureToolsCLI
-
-    
-      
