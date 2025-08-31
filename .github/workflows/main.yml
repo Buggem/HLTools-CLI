@@ -16,7 +16,9 @@ jobs:
       uses: actions/setup-dotnet@v4
 
     - name: Build & Install Mono
-      run: ./.github/install-mono.sh
+      run: |
+        ls
+        ./.github/install-mono.sh
 
     - name: Compile
       run: ./compile.sh
