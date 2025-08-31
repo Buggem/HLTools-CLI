@@ -5,10 +5,6 @@ if [ -z $PREFIX ]; then
   PREFIX="/usr/local"
 fi
 
-# Ensure you have write permissions to PREFIX
-sudo mkdir $PREFIX
-sudo chown -R `whoami` $PREFIX
-
 # Ensure that all required packages are installed.
 sudo apt-get install git autoconf libtool automake build-essential gettext cmake python
 
