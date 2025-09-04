@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ "$1" = "--help"  ] || [ "$1" = "-help" ] || [ "$1" = "-h" ]
 then
     printf "%s\n" "Usage: $0 [-help/-lib/-dnet/clean]"
@@ -25,20 +27,23 @@ then
     exit 0
 fi
 
+# brand new thing
+MCSOPT="-out:bin/HLTools.exe"
 if [ "$1" = "-lib" ]
 then
-    mcs -target:library \
-        -out:bin/HLTools.dll \
-        -reference:lib/FreeImageNET.dll \
-        -reference:System.Drawing.dll \
-        TextureExceptions.cs SpriteLoader.cs WAD3Loader.cs 
-    exit 0
+    MCSOPT="-target:library -out:bin/HLTools.dll"
 fi
 
-mcs -out:bin/HLTools.exe \
+if [ "$1" = "-debug" ]
+then
+    MCSOPT="$MCSOPT -debug"
+fi
+
+
+mcs $MCSOPT \
     -reference:lib/FreeImageNET.dll \
     -reference:System.Drawing.dll \
-    Main.cs TextureExceptions.cs SpriteLoader.cs WAD3Loader.cs 
+    Main.cs TextureExceptions.cs SpriteLoader.cs WAD3Loader.cs MDLLoader.cs CLIHelper.cs
 
 # copy library to bin folder
 cp lib/FreeImageNET.dll bin/

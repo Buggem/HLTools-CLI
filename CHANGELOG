@@ -1,0 +1,8 @@
+0.1
+initial commit
+
+0.3
+- add MDL scanning
+- code D.R.Y cleanup
+- helper tool to help with mundane tasks (i.e. getting a checksum)
+
