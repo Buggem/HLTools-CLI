@@ -31,5 +31,6 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         name: Continuous Build
+        tag: continuous
         allowUpdates: false
         artifacts: HLTextureToolsCLI
