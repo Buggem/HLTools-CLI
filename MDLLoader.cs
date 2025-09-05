@@ -122,13 +122,29 @@ namespace HLTools
                                                            would be programs that use merge model
                                                            systems, such as the GoldSrc.one server.
                                                         */
-            fs.Position += ((12 * 5) + (4 * 11));       /* Why is there no better way to seek through the file
-                                                           
-                                                           Goes to 60 + 44 = 104 byte skip
+
+            fs.Position = (64 + (12 * 5) + (4 * 14));   /* 
+                                                           Should be equal to fs.Position += ((12 * 5) + (4 * 11));
+                                                           Goes to 64 + 60 + 56 = 180 byte seek
                                                         */
+
+            // version specific hacky hacks
+            if (modelHeader.version == 6)
+            {
+                /* 
+                   As this model version (used in 0.52 alpha for
+                   most models, with some exceptions) uses a
+                   different header structure, a different
+                   section to skim to is needed.
+
+                   NOTE: for some reason my previous index here was off by 2; hexdump sucked maybe?
+                */
+                fs.Position = 0x64;
+            }
             modelHeader.numTextures = binReader.ReadInt32();
+            Console.WriteLine(modelHeader.numTextures);
             modelHeader.textureIndex = binReader.ReadInt32();
-            modelHeader.textureDataIndex = binReader.ReadInt32();
+            modelHeader.textureDataIndex = binReader.ReadInt32(); // goes unused, here for reasons I cannot and will not explain
 
             ModelHeader = modelHeader;
             // before we give the go-ahead, check it's not 0 (no idea why, but that's what the HLSDK does)

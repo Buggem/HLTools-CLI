@@ -78,6 +78,14 @@ namespace HLTools
             Bitmap imageBitmap
         )
         {
+            bool isTransPal = false;
+            for (int i = 0; i < imageBitmap.Palette.Entries.Length; i++)
+            {
+                if (imageBitmap.Palette.Entries[i].A != 255)
+                    isTransPal = true; // there is transparency here!
+            }
+            if (!isTransPal)
+                return; // no cleaning up here, this is why it's at the start
             FileStream oldPng = new FileStream(fullSavePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
             BinaryReader oldPngReader = new BinaryReader(oldPng, Encoding.ASCII);
             byte[] oldPngArr = oldPngReader.ReadBytes((int)oldPng.Length);
