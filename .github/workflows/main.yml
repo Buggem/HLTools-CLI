@@ -30,7 +30,7 @@ jobs:
     - name: Release
       uses: ncipollo/release-action@v1
       with:
-        name: Continuous Build
+        name: Latest Build (GHA)
         tag: continuous
         allowUpdates: false
         artifacts: HLTextureToolsCLI
