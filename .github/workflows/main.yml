@@ -28,9 +28,16 @@ jobs:
         path: |
           ./bin/*
   upload:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
+    - name: Remove previous release
+      run: |
+        gh release delete "continuous" \
+              --yes \
+              --cleanup-tag \
+              --repo "Buggem/HL-Texture-Tools-CLI" || true
     - name: Release
       uses: ncipollo/release-action@v1
       with:
