@@ -1,8 +1,0 @@
-# Other model textures
-
-## Version 4 (0.52 desert, olive grunts)
-unfinished, unstarted
-
-## Version 6 (main 0.52 ver)
-Implemented, seek to index 100 (0x64) for numTextures, textureIndex, textureDataIndex in specific case.
-TODO: investigation into structure just for fun
