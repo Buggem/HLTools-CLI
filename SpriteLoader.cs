@@ -134,7 +134,16 @@ namespace HLTools
 
             spriteHeader.Version = binReader.ReadInt32();
             spriteHeader.Type = (SprType)binReader.ReadInt32();
-            spriteHeader.TextFormat = (SprTextFormat)binReader.ReadInt32();
+            if (spriteHeader.Version != 1)
+            {
+                spriteHeader.TextFormat = (SprTextFormat)binReader.ReadInt32();
+            }
+            else
+            {
+                // for alpha Half-Life (<<NOT QUAKE>>) just use normal type TextFormat
+                // Quake is quite different to the alpha when it comes to sprites
+                spriteHeader.TextFormat = SprTextFormat.SPR_NORMAL;
+            }
             spriteHeader.BoundingRadius = binReader.ReadSingle();
             spriteHeader.MaxWidth = binReader.ReadInt32();
             spriteHeader.MaxHeight = binReader.ReadInt32();

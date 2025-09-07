@@ -1,3 +1,4 @@
 bin/*.exe
 bin/*.dll
+bin/*.mdb
 .vscode
