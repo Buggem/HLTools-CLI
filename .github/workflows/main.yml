@@ -27,11 +27,7 @@ jobs:
         name: HLTextureToolsCLI
         path: |
           ./bin/*
-  upload:
-    needs: build
-    runs-on: ubuntu-latest
 
-    steps:
     - name: Remove previous release
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -46,4 +42,4 @@ jobs:
         name: Latest Build (GHA)
         tag: continuous
         allowUpdates: false
-        artifacts: HLTextureToolsCLI
+        artifacts: bin/*
