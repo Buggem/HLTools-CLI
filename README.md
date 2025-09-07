@@ -2,8 +2,8 @@
 
 
 ### Dependencies
-[Mono \(recommended\)](https://www.mono-project.com/download/stable/) or [.NET](https://dotnet.microsoft.com/en-us/download)
-[FreeImageNET](https://www.nuget.org/packages/FreeImageNET/) wrapper version 3.17.1 or newer.
+[Mono \(recommended\)](https://www.mono-project.com/download/stable/) or [.NET](https://dotnet.microsoft.com/en-us/download)<br>
+[FreeImageNET](https://www.nuget.org/packages/FreeImageNET/) wrapper version 3.17.1 or newer.<br>
 [FreeImage](https://freeimage.sourceforge.net)
 
 **Upstream release: 1.6.5**
