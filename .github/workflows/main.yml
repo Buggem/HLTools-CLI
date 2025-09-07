@@ -3,6 +3,8 @@ name: Build
 on:
   push:
     branches: [ "main" ]
+    paths: [ "*.cs", "*.sh" ]
+  workflow-dispatch
 
 jobs:
   build:
@@ -20,6 +22,9 @@ jobs:
 
     - name: Compile
       run: ./compile.sh
+
+    - name: Package
+      run: zip -r CLI_build.zip bin/*
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -42,4 +47,4 @@ jobs:
         name: Latest Build (GHA)
         tag: continuous
         allowUpdates: false
-        artifacts: bin/*
+        artifacts: bin/CLI_build.zip
