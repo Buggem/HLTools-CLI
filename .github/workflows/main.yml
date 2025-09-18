@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
     paths: [ "*.cs", "*.sh" ]
-  workflow-dispatch
+  workflow_dispatch:
 
 jobs:
   build:
