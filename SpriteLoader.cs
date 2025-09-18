@@ -140,8 +140,8 @@ namespace HLTools
             }
             else
             {
-                // for alpha Half-Life (<<NOT QUAKE>>) just use normal type TextFormat
-                // Quake is quite different to the alpha when it comes to sprites
+                // ALPHA: for alpha Half-Life (<<NOT QUAKE>>) just use normal type TextFormat
+                // NOTE: Quake is quite different to the Alpha when it comes to sprites
                 spriteHeader.TextFormat = SprTextFormat.SPR_NORMAL;
             }
             spriteHeader.BoundingRadius = binReader.ReadSingle();
@@ -236,8 +236,9 @@ namespace HLTools
         /// <param name="palIndex">Which palette use from files</param>
         /// <param name="alphaReplacementColor">Which color to use as replacement for alpha</param>
         /// <param name="quantizePalette">Use quantized palette of all frames.</param>
+        /// <param name="sprVersion">Version of sprite file.</param>
         public static void CreateSpriteFile(string outputPath, string[] files, SprType spriteType,
-            SprTextFormat textFormat, int palIndex, Color alphaReplacementColor, bool quantizePalette)
+            SprTextFormat textFormat, int palIndex, Color alphaReplacementColor, bool quantizePalette, int sprVersion = 2)
         {
             var images = files.Select(file => new FreeImageBitmap(file)).ToList();
 
@@ -283,7 +284,12 @@ namespace HLTools
                 bw.Write(SpriteHeaderId.ToCharArray());
                 bw.Write(2);
                 bw.Write((uint)spriteType);
-                bw.Write((uint)textFormat);
+                if(sprVersion != 1)
+                    bw.Write((uint)textFormat);
+                /*
+                    ALPHA: Let textFormat go for non-final sprites.
+                    NOTE: while writing Alpha 0.52 sprites should theoratically work, this is not practiced as the executable would not run.
+                */
                 bw.Write(f);
                 bw.Write(maxW);
                 bw.Write(maxH);
@@ -457,6 +463,7 @@ namespace HLTools
             if (fs.Length >= 12)
             {
                 fs.Seek(8, SeekOrigin.Begin); //Skip first
+                // ALPHA: no change needed here
                 byte[] type = BitConverter.GetBytes((int)newType);
                 fs.Write(type, 0, type.Length);
                 fs.Flush();
@@ -480,8 +487,8 @@ namespace HLTools
             //Save to original file
             if (outputFileName == null)
             {
-                fs.Seek(0x2A, SeekOrigin.Begin); //Skip first
-
+                fs.Seek(0x2A + (SprHeader.Version != 1 ? 0 : -4), SeekOrigin.Begin); //Skip first
+                // ALPHA: seek a little bit back to skip TextFormat
                 foreach (var entry in newPalette.Entries)
                 {
                     fs.WriteByte(entry.R);
@@ -497,8 +504,9 @@ namespace HLTools
                 File.Copy(Filename, outputFileName);
                 using (var sw = new FileStream(outputFileName, FileMode.Open, FileAccess.ReadWrite))
                 {
-                    sw.Seek(0x2A, SeekOrigin.Begin); //Skip first
-
+                    sw.Seek(0x2A + (SprHeader.Version != 1 ? 0 : -4), SeekOrigin.Begin); //Skip first
+                    // ALPHA: seek a little bit back to skip TextFormat
+                    // NOTE: Implement DRY
                     foreach (var entry in newPalette.Entries)
                     {
                         sw.WriteByte(entry.R);
@@ -511,6 +519,7 @@ namespace HLTools
 
         public byte GetPixelIndexAtPos(int frameIndex, int x, int y)
         {
+            // TODO: remove unused and seemingly pointless function?
             long relativePos = (y * SpriteHeader.MaxWidth) + x;
             long pos = indexesOfPixelPositions[frameIndex] + relativePos;
             if (pos > binReader.BaseStream.Length) throw new ArgumentOutOfRangeException();
@@ -525,8 +534,8 @@ namespace HLTools
         /// <param name="destination">Destination palette index.</param>
         public void SwitchColorIndex(byte source, byte destination)
         {
-            binReader.BaseStream.Seek(0x14, SeekOrigin.Begin);
-
+            binReader.BaseStream.Seek(0x14 + (SprHeader.Version != 1 ? 0 : -4), SeekOrigin.Begin);
+            // ALPHA: seek a little bit back to skip TextFormat (manually typed instead of copying and pasting, have I gone mental?)
             for (int i = 0; i < indexesOfPixelPositions.Length; i++)
             {
                 binReader.BaseStream.Seek(indexesOfPixelPositions[i], SeekOrigin.Begin);
