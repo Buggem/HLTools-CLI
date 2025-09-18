@@ -10,7 +10,7 @@ I could find very little information on this.
  - only people who extracted it successfully are TCRF people (staying away bc freaky)
 
 **Ideas for the future:**
- - Check out HLAM, loads of useful things there (wonder why they archived it)
+ - ~~Check out HLAM, loads of useful things there (wonder why they archived it)~~\n**found nothing**
  - Check the Alpha executables for symbols in Ghidra and decompile
 
 ## Version 6 (main 0.52 ver)
