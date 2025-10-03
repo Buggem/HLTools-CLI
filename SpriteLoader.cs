@@ -487,7 +487,7 @@ namespace HLTools
             //Save to original file
             if (outputFileName == null)
             {
-                fs.Seek(0x2A + (SprHeader.Version != 1 ? 0 : -4), SeekOrigin.Begin); //Skip first
+                fs.Seek(0x2A + (SpriteHeader.Version != 1 ? 0 : -4), SeekOrigin.Begin); //Skip first
                 // ALPHA: seek a little bit back to skip TextFormat
                 foreach (var entry in newPalette.Entries)
                 {
@@ -504,7 +504,7 @@ namespace HLTools
                 File.Copy(Filename, outputFileName);
                 using (var sw = new FileStream(outputFileName, FileMode.Open, FileAccess.ReadWrite))
                 {
-                    sw.Seek(0x2A + (SprHeader.Version != 1 ? 0 : -4), SeekOrigin.Begin); //Skip first
+                    sw.Seek(0x2A + (SpriteHeader.Version != 1 ? 0 : -4), SeekOrigin.Begin); //Skip first
                     // ALPHA: seek a little bit back to skip TextFormat
                     // NOTE: Implement DRY
                     foreach (var entry in newPalette.Entries)
@@ -534,7 +534,7 @@ namespace HLTools
         /// <param name="destination">Destination palette index.</param>
         public void SwitchColorIndex(byte source, byte destination)
         {
-            binReader.BaseStream.Seek(0x14 + (SprHeader.Version != 1 ? 0 : -4), SeekOrigin.Begin);
+            binReader.BaseStream.Seek(0x14 + (SpriteHeader.Version != 1 ? 0 : -4), SeekOrigin.Begin);
             // ALPHA: seek a little bit back to skip TextFormat (manually typed instead of copying and pasting, have I gone mental?)
             for (int i = 0; i < indexesOfPixelPositions.Length; i++)
             {
