@@ -25,6 +25,16 @@ using FreeImageAPI;
 
 namespace HLTools
 {
+    public enum WADCommands : byte
+    {
+        Palette   = 64 + 0,
+        Colormap  = 64 + 1,
+        QPic      = 64 + 2,
+        MipTex    = 64 + 3,
+        Raw       = 64 + 4,
+        Colormap2 = 64 + 5,
+        Font      = 64 + 6
+    }
     /// <summary>
     /// GoldSrc WAD Parser 0.8.2
     /// Written by Yuraj.
@@ -204,16 +214,22 @@ namespace HLTools
             {
                 byte type = LumpsInfo[index].Type;
 
+                //Console.WriteLine(LumpsInfo[index].Name + ", type=" + (int)type);
                 //0x40 - tempdecal.wad
                 //0x42 - cached.wad
                 //0x43 - normald wads
                 //0x46 - fonts 
-                if (type == 0x40 || type == 0x42 || type == 0x43 || type == 0x46) //Supported types
+                if (type == (byte)WADCommands.Palette ||
+                    type == (byte)WADCommands.QPic ||
+                    type == (byte)WADCommands.MipTex ||
+                    type == (byte)WADCommands.Font
+                ) //Supported types
                 {
                     //Go to lump
                     binReader.BaseStream.Seek(LumpsInfo[index].Offset, SeekOrigin.Begin);
 
-                    if (type == 0x40 || type == 0x43)
+                    if (type == (byte)WADCommands.Palette ||
+                        type == (byte)WADCommands.MipTex)
                     {
                         //Skip lump name
                         binReader.BaseStream.Seek(MaxNameLength, SeekOrigin.Current);
@@ -230,7 +246,7 @@ namespace HLTools
                         throw new TextureDimensionException("Texture width and height must be larger than 0!");
 
                     //If QFont
-                    if (type == 0x46)
+                    if (type == (byte)WADCommands.Font)
                     {
                         //width = width * QCharWidth;
                         width = 256;
@@ -249,7 +265,8 @@ namespace HLTools
                     Bitmap bmp = new Bitmap((int)width, (int)height, PixelFormat.Format8bppIndexed);
 
                     //Read pixel offset, skip MIPMAPS offsets
-                    if (type == 0x40 || type == 0x43)
+                    if (type == (byte)WADCommands.Palette ||
+                        type == (byte)WADCommands.MipTex)
                     {
                         //Not used, but needed
                         uint pixelOffset = binReader.ReadUInt32();
@@ -267,7 +284,8 @@ namespace HLTools
 
                     //Read MIPMAPS
                     Texture.TextureMipmaps mipmaps = null;
-                    if (type == 0x40 || type == 0x43)
+                    if (type == (byte)WADCommands.Palette ||
+                        type == (byte)WADCommands.MipTex)
                     {
                         mipmaps = new Texture.TextureMipmaps
                         {
@@ -288,7 +306,7 @@ namespace HLTools
                     byte[] palBytes = binReader.ReadBytes(MaxPaletteColors * 3);
                     for (int i = 0, j = 0; i < MaxPaletteColors; i++)
                     {
-                        if (type == 0x40) //e.g.: tempdecal.wad
+                        if (type == (byte)WADCommands.Palette) //e.g.: tempdecal.wad
                         {
                             pal.Entries[i] = Color.FromArgb(i, i, i);
                         }
@@ -308,7 +326,7 @@ namespace HLTools
                     bmp.Palette = pal;
 
                     //Lock bitmap for pixel manipulation
-                    BitmapData bmd = bmp.LockBits(new Rectangle(0, 0, (int)width, (int)height),ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+                    BitmapData bmd = bmp.LockBits(new Rectangle(0, 0, (int)width, (int)height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
                     System.Runtime.InteropServices.Marshal.Copy(pixels, 0, bmd.Scan0, pixels.Length);
                     bmp.UnlockBits(bmd);
 
@@ -439,7 +457,8 @@ namespace HLTools
             fs.Write(newName, 0, newName.Length);
 
             //Edit in texture if type
-            if (LumpsInfo[lumpIndex].Type == 0x40 || LumpsInfo[lumpIndex].Type == 0x43)
+            if (LumpsInfo[lumpIndex].Type == (byte)WADCommands.Palette ||
+                LumpsInfo[lumpIndex].Type == (byte)WADCommands.MipTex)
             {
                 fs.Seek(LumpsInfo[lumpIndex].Offset, SeekOrigin.Begin);
                 fs.Write(newName, 0, newName.Length);
@@ -676,7 +695,8 @@ namespace HLTools
                         originalImage.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_08_BPP);
                     }
 
-                    if (reserveLastClr) {
+                    if (reserveLastClr)
+                    {
                         if (isTransparentImage)
                         {
                             bool foundReplacementColor = false;
@@ -689,7 +709,8 @@ namespace HLTools
                                     originalImage.Palette[pindex] = lastColor;
                                     originalImage.Palette[MaxPaletteColors - 1] = new RGBQUAD(alphaReplacementColor);
                                     originalImage.SwapPaletteIndices((byte)pindex, MaxPaletteColors - 1);
-                                    if (originalImage.TransparentIndex != -1) {
+                                    if (originalImage.TransparentIndex != -1)
+                                    {
                                         originalImage.TransparentIndex = MaxPaletteColors - 1;
                                     }
                                     foundReplacementColor = true;
@@ -798,7 +819,7 @@ namespace HLTools
                     bw.Write(offsets[i]);
                     bw.Write(sizes[i]);
                     bw.Write(sizes[i]);
-                    bw.Write((byte)0x43);
+                    bw.Write((byte)WADCommands.MipTex);
                     bw.Write((byte)0);
                     bw.Write(new byte[] { 0x00, 0x00 });
                     byte[] name = CreateTextureName(names[i]);
