@@ -44,5 +44,4 @@ jobs:
         gh release create "continuous" bin/* \
               --title "Latest release (Continuous)" \
               --target "$GITHUB_SHA" \
-              --repo "$GITHUB_REPOSITORY" \
-              --yes || true
+              --repo "$GITHUB_REPOSITORY" || true
