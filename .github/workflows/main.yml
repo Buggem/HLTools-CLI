@@ -47,4 +47,4 @@ jobs:
         name: Latest Build (GHA)
         tag: continuous
         allowUpdates: false
-        artifacts: bin/CLI_build.zip
+        artifacts: HLTextureToolsCLI
